@@ -1,0 +1,12 @@
+{
+  "raw": "Student folder",
+  "out": "data\\processed",
+  "splits": null,
+  "radius": 50.0,
+  "max_cands": 10,
+  "sample_step": 10.0,
+  "gap_s": 5.0,
+  "label_max_dist": 30.0,
+  "max_trip_low_conf": 0.5,
+  "seed": 42
+}

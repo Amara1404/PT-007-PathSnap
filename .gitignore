@@ -1,0 +1,15 @@
+# Raw hackathon data and course handouts: not redistributed in this public repo
+Student folder/
+*.pdf
+
+# Regenerable with: python -m src.data.build_datasets --raw "Student folder" --out data/processed
+data/processed/*.parquet
+data/processed/server_only/
+tests/synthetic_raw/
+tests/synthetic_processed/
+
+# Python / tooling
+__pycache__/
+*.pyc
+.venv/
+.ipynb_checkpoints/

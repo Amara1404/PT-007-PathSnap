@@ -1,0 +1,23 @@
+trip_id,issue,count,detail
+00000076,route_disconnected_steps,1,reference route not fully contiguous
+00000091,arcs_self_loop,2,
+00000002,route_disconnected_steps,1,reference route not fully contiguous
+00000013,arcs_self_loop,2,
+00000019,route_disconnected_steps,3,reference route not fully contiguous
+00000024,arcs_self_loop,2,
+00000033,route_disconnected_steps,1,reference route not fully contiguous
+00000035,arcs_self_loop,2,
+00000038,arcs_self_loop,2,
+00000041,route_disconnected_steps,1,reference route not fully contiguous
+00000042,route_disconnected_steps,1,reference route not fully contiguous
+00000055,arcs_self_loop,8,
+00000069,route_disconnected_steps,1,reference route not fully contiguous
+00000075,route_disconnected_steps,2,reference route not fully contiguous
+00000079,arcs_self_loop,2,
+00000080,route_disconnected_steps,1,reference route not fully contiguous
+00000084,arcs_self_loop,2,
+00000086,route_disconnected_steps,1,reference route not fully contiguous
+00000089,route_disconnected_steps,1,reference route not fully contiguous
+00000099,arcs_self_loop,2,
+00000033,trip_labels_unreliable,1,71.1% of points >30 m from reference route; usable=0
+00000054,trip_labels_unreliable,1,90.6% of points >30 m from reference route; usable=0
