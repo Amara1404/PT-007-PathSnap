@@ -35,8 +35,18 @@ def _trips_dir() -> Path:
     env = os.environ.get("PATHSNAP_TRIPS_DIR")
     if env:
         return Path(env)
-    default = Path("data/eval_trips")
-    return default if default.exists() else Path("Student folder/student_test")
+    # Resolve relative to this file's repo root, not CWD
+    repo_root = Path(__file__).resolve().parent.parent
+    default = repo_root / "data" / "eval_trips"
+    if default.exists():
+        return default
+    # Fall back to the workspace's Student folder (sibling of _repo_clone)
+    workspace = repo_root.parent
+    student_test = workspace / "Student folder" / "student_test"
+    if student_test.exists():
+        return student_test
+    # Last resort: relative path from CWD
+    return Path("Student folder/student_test")
 
 
 TRIPS_DIR = _trips_dir()
