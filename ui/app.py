@@ -204,13 +204,14 @@ with tab_predict:
     if res:
         m = res.get("metrics", {})
 
+        _model_name = res.get("model", "model").replace(".joblib", "")
         c1, c2, c3, c4, c5 = st.columns(5)
         with c1:
             v = m.get("top1_accuracy")
-            st.metric("Top-1 Accuracy (HMM)", f"{v:.1%}" if v is not None else "—")
+            st.metric(f"{_model_name} + HMM Top-1", f"{v:.1%}" if v is not None else "—")
         with c2:
             v = m.get("classifier_only_top1")
-            st.metric("Top-1 (Clf only)", f"{v:.1%}" if v is not None else "—")
+            st.metric(f"{_model_name} only Top-1", f"{v:.1%}" if v is not None else "—")
         with c3:
             v = m.get("route_continuity")
             st.metric("Route Continuity", f"{v:.1%}" if v is not None else "—")
