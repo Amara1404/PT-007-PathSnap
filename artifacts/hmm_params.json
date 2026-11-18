@@ -1,0 +1,11 @@
+{
+  "beta": 14.0,
+  "emission_weight": 1.0,
+  "transition_weight": 1.0,
+  "disconnected_penalty": 0.0001,
+  "same_arc_factor": 2.0,
+  "direct_turn_scale": 1.0,
+  "gap_threshold_s": 6.0,
+  "max_search_dist": 350.0,
+  "max_speed_mps": 50.0
+}
