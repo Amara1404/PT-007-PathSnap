@@ -13,3 +13,7 @@ __pycache__/
 *.pyc
 .venv/
 .ipynb_checkpoints/
+
+# Large or data-containing model files: regenerable with python -m src.models.train_models --models rf,knn
+artifacts/models/random_forest.joblib
+artifacts/models/knn.joblib

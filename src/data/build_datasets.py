@@ -27,7 +27,9 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import time
+from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 
 import numpy as np
@@ -151,6 +153,8 @@ def main(argv=None):
     p.add_argument("--max-trip-low-conf", type=float, default=0.5,
                    help="flag a whole trip unusable if more than this fraction of its labels is low-confidence")
     p.add_argument("--seed", type=int, default=42)
+    p.add_argument("--workers", type=int, default=min(8, os.cpu_count() or 1),
+                   help="parallel worker processes (1 = sequential)")
     args = p.parse_args(argv)
 
     out = args.out
@@ -163,9 +167,15 @@ def main(argv=None):
     inv_rows, net_rows, issues, arcs_all = [], [], [], []
     obs_by, cand_by = {k: [] for k in PARTITIONS}, {k: [] for k in PARTITIONS}
     t0 = time.time()
+    # Trips are independent -> process them in parallel worker processes.
+    # Results are consumed in the original trip order so outputs are deterministic.
+    workers = max(1, args.workers)
+    pool = ProcessPoolExecutor(max_workers=workers) if workers > 1 else None
+    futures = [pool.submit(process_trip, f, args) for f in files] if pool else None
     for n, f in enumerate(files, 1):
         try:
-            trip, inv, ns, obs, cand, arcs_out = process_trip(f, args)
+            res = futures[n - 1].result() if pool else process_trip(f, args)
+            trip, inv, ns, obs, cand, arcs_out = res
         except Exception as e:  # keep going; record the failure
             issues.append({"trip_id": f.trip_id, "issue": "trip_failed", "count": 1, "detail": repr(e)})
             print(f"  [{n}/{len(files)}] {f.trip_id}: FAILED {e!r}")
@@ -174,6 +184,8 @@ def main(argv=None):
         inv_rows.append(inv); net_rows.append(ns); arcs_all.append(arcs_out)
         obs_by[f.partition].append(obs); cand_by[f.partition].append(cand)
         print(f"  [{n}/{len(files)}] {f.trip_id} ({f.partition}): {len(obs)} obs, {len(cand)} cand rows")
+    if pool:
+        pool.shutdown()
 
     pd.DataFrame(inv_rows).to_csv(out / "inventory_trips.csv", index=False)
     pd.DataFrame(net_rows).to_csv(out / "network_stats.csv", index=False)
