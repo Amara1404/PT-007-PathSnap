@@ -150,6 +150,8 @@ def run_experiment(exp: Experiment, folds_csv: Path = Path("data/cv_folds.csv"),
 def _history(model):
     """Epoch-wise history for models that produce one (MLP); None otherwise."""
     est = model[-1] if hasattr(model, "steps") else model
+    if isinstance(getattr(est, "history_", None), pd.DataFrame):
+        return est.history_
     if hasattr(est, "loss_curve_"):
         h = pd.DataFrame({"epoch": np.arange(1, len(est.loss_curve_) + 1), "train_loss": est.loss_curve_})
         if getattr(est, "validation_scores_", None) is not None:

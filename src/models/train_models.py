@@ -10,16 +10,19 @@ results/preds/<model>_student_test.parquet, artifacts/models/<model>.joblib
 from __future__ import annotations
 
 import argparse
+import json
+from pathlib import Path
 
 import numpy as np
 from sklearn.base import BaseEstimator, ClassifierMixin
-from sklearn.ensemble import HistGradientBoostingClassifier, RandomForestClassifier
+from sklearn.ensemble import ExtraTreesClassifier, HistGradientBoostingClassifier, RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
+from sklearn.tree import DecisionTreeClassifier
 
 from .common import FEATURES, SEED, Experiment, run_experiment
 
@@ -62,8 +65,30 @@ EXPERIMENTS = {
         "mlp", "Neural network", "StandardScaler + MLP(64, 32), adam, early stopping",
         lambda: make_pipeline(StandardScaler(), MLPClassifier(hidden_layer_sizes=(64, 32), early_stopping=True,
                                                               max_iter=200, random_state=SEED))),
+    "decision_tree": Experiment(
+        "decision_tree", "Tree-based", "DecisionTree(unlimited depth, min_samples_leaf=1)",
+        lambda: DecisionTreeClassifier(random_state=SEED)),
+    "extra_trees": Experiment(
+        "extra_trees", "Ensemble (randomised trees)", "ExtraTrees(300 trees, min_samples_leaf=5)",
+        lambda: ExtraTreesClassifier(n_estimators=300, min_samples_leaf=5, n_jobs=-1, random_state=SEED)),
 }
-ALIASES = {"lr": "logreg", "rf": "random_forest", "hgb": "hist_gb", "nb": "gnb", "base": "baseline_nearest"}
+
+# Tuned HistGB (written by src/models/tune_hgb.py). Registered here so the same runner and
+# src/models/oof.py can rebuild it: python -m src.models.oof --model hist_gb_tuned
+_TUNED_INFO = Path("artifacts/hist_gb_tuned_params.json")
+if _TUNED_INFO.exists():
+    _tuned_params = json.loads(_TUNED_INFO.read_text())["params"]
+
+    def _make_tuned():
+        from .tune_hgb import make_hgb
+        return make_hgb(_tuned_params)
+
+    EXPERIMENTS["hist_gb_tuned"] = Experiment(
+        "hist_gb_tuned", "Boosting (tuned)", "HistGB with Optuna-tuned parameters (artifacts/hist_gb_tuned_params.json)",
+        _make_tuned)
+
+ALIASES = {"lr": "logreg", "rf": "random_forest", "hgb": "hist_gb", "nb": "gnb", "base": "baseline_nearest",
+           "dt": "decision_tree", "et": "extra_trees"}
 
 
 def main(argv=None):

@@ -1,0 +1,20 @@
+29 features; running: decision_tree, extra_trees, mlp
+
+== decision_tree ==
+  [decision_tree] fold 0: val macroF1=0.9133 top1=0.8562 train macroF1=1.0000 (4.3s)
+  [decision_tree] fold 1: val macroF1=0.8959 top1=0.8278 train macroF1=1.0000 (4.4s)
+  [decision_tree] fold 2: val macroF1=0.9142 top1=0.8713 train macroF1=1.0000 (4.1s)
+  [decision_tree] fold 3: val macroF1=0.8986 top1=0.8416 train macroF1=1.0000 (4.3s)
+  [decision_tree] fold 4: val macroF1=0.9143 top1=0.8681 train macroF1=1.0000 (4.0s)
+  [decision_tree] CV macroF1=0.9072±0.0092 | student-test top1=0.8543 macroF1=0.9095 logloss=0.7298 | 35s total
+
+== extra_trees ==
+  [extra_trees] fold 0: val macroF1=0.9463 top1=0.9177 train macroF1=0.9470 (3.4s)
+  [extra_trees] fold 1: val macroF1=0.9228 top1=0.8683 train macroF1=0.9518 (3.3s)
+  [extra_trees] fold 2: val macroF1=0.9373 top1=0.8942 train macroF1=0.9486 (3.0s)
+  [extra_trees] fold 3: val macroF1=0.9224 top1=0.8739 train macroF1=0.9511 (3.2s)
+  [extra_trees] fold 4: val macroF1=0.9425 top1=0.9126 train macroF1=0.9471 (3.3s)
+  [extra_trees] CV macroF1=0.9342±0.0111 | student-test top1=0.8888 macroF1=0.9335 logloss=0.0834 | 36s total
+
+== mlp ==
+  [mlp] fold 0: val macroF1=0.9360 top1=0.9065 train macroF1=0.9403 (21.0s)

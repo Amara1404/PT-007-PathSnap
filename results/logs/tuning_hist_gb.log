@@ -1,0 +1,61 @@
+  trial  0:  0.8930 | best 0.8930 | 17s
+  trial  1:  0.8927 | best 0.8930 | 56s
+  trial  2:  0.8916 | best 0.8930 | 13s
+  trial  3:  0.8936 | best 0.8936 | 58s
+  trial  4:  0.8937 | best 0.8937 | 65s
+  trial  5:  0.8922 | best 0.8937 | 25s
+  trial  6:  0.8927 | best 0.8937 | 50s
+  trial  7:  0.8944 | best 0.8944 | 60s
+  trial  8:  0.8918 | best 0.8944 | 19s
+  trial  9:  0.8939 | best 0.8944 | 69s
+  trial 10:  0.8930 | best 0.8944 | 33s
+  trial 11:  0.8939 | best 0.8944 | 74s
+  trial 12:  0.8934 | best 0.8944 | 53s
+  trial 13:  0.8934 | best 0.8944 | 41s
+  trial 14:  0.8935 | best 0.8944 | 36s
+  trial 15:  0.8933 | best 0.8944 | 72s
+  trial 16:  0.8936 | best 0.8944 | 75s
+  trial 17:  0.8935 | best 0.8944 | 88s
+  trial 18:  0.8944 | best 0.8944 | 65s
+  trial 19:  0.8937 | best 0.8944 | 49s
+  trial 20:  0.8939 | best 0.8944 | 61s
+  trial 21:  0.8934 | best 0.8944 | 72s
+  trial 22:  0.8932 | best 0.8944 | 55s
+  trial 23:  0.8939 | best 0.8944 | 71s
+  trial 24:  0.8937 | best 0.8944 | 66s
+  trial 25:  0.8941 | best 0.8944 | 68s
+  trial 26:  0.8942 | best 0.8944 | 102s
+  trial 27:  0.8934 | best 0.8944 | 59s
+  trial 28:  0.8936 | best 0.8944 | 79s
+  trial 29:  0.8946 | best 0.8946 | 106s
+  trial 30:  0.8941 | best 0.8946 | 76s
+  trial 31:  0.8945 | best 0.8946 | 94s
+  trial 32:  0.8943 | best 0.8946 | 96s
+  trial 33:  0.8940 | best 0.8946 | 54s
+  trial 34:  0.8946 | best 0.8946 | 80s
+  trial 35:  0.8942 | best 0.8946 | 83s
+  trial 36:  0.8939 | best 0.8946 | 74s
+  trial 37:  0.8941 | best 0.8946 | 122s
+  trial 38:  0.8939 | best 0.8946 | 88s
+  trial 39:  0.8939 | best 0.8946 | 80s
+
+Best CV Top-1 0.8946 (trial 29); search took 43.4 min
+Best parameters: {"learning_rate": 0.01225746724529465, "max_leaf_nodes": 95, "min_samples_leaf": 28, "l2_regularization": 7.93142294100041e-06, "limit_depth": false, "max_features": 0.6280791830432442}
+  [hist_gb_tuned] fold 0: val macroF1=0.9431 top1=0.9110 train macroF1=0.9667 (15.5s)
+  [hist_gb_tuned] fold 1: val macroF1=0.9216 top1=0.8680 train macroF1=0.9723 (16.9s)
+  [hist_gb_tuned] fold 2: val macroF1=0.9400 top1=0.9007 train macroF1=0.9704 (16.7s)
+  [hist_gb_tuned] fold 3: val macroF1=0.9281 top1=0.8808 train macroF1=0.9713 (15.5s)
+  [hist_gb_tuned] fold 4: val macroF1=0.9446 top1=0.9128 train macroF1=0.9714 (17.4s)
+  [hist_gb_tuned] CV macroF1=0.9355±0.0101 | student-test top1=0.9006 macroF1=0.9407 logloss=0.0738 | 140s total
+model                    hist_gb  hist_gb_tuned   change
+cv_macro_f1_mean          0.9342         0.9355   0.0013
+cv_top1_mean              0.8929         0.8946   0.0017
+cv_log_loss_mean          0.0869         0.0845  -0.0024
+st_top1_acc               0.9027         0.9006  -0.0021
+st_macro_f1               0.9410         0.9407  -0.0004
+st_log_loss               0.0749         0.0738  -0.0011
+st_route_continuity       0.9596         0.9610   0.0013
+fit_time_s                3.5690        18.2091  14.6401
+inference_ms_per_1k_obs  20.6881        90.5391  69.8510
+
+Saved artifacts/model.joblib (the API now serves the tuned model).

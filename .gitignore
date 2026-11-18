@@ -25,4 +25,4 @@ results/oof/
 
 src/hmm/data.py
 src/hmm/evaluate.py
-src/models/oof.py
+src/models/oof.pyartifacts/models/extra_trees.joblib

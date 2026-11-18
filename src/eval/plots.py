@@ -166,10 +166,89 @@ def histories():
         _save(fig, f"history_{name}.png")
 
 
+def tuning_history(trials):
+    t = trials.sort_values("number")
+    done = t[t.state == "COMPLETE"]
+    fig, ax = plt.subplots(figsize=(7.5, 3.6))
+    ax.grid(axis="y"); ax.grid(axis="x", visible=False)
+    ax.scatter(done.number, done.value, s=22, color=BLUE, label="Completed trial (CV Top-1)", zorder=3)
+    pr = t[t.state == "PRUNED"]
+    if len(pr):
+        ax.scatter(pr.number, np.full(len(pr), done.value.min()), s=18, marker="x", color=INK2,
+                   label="Pruned trial (stopped early)", zorder=3)
+    best = done.set_index("number").value.cummax().reindex(t.number).ffill()
+    ax.step(best.index, best.values, where="post", color=ORANGE, linewidth=2, label="Best so far")
+    d0 = done[done.number == 0]
+    if len(d0):
+        ax.annotate("untuned defaults", (0, d0.value.iat[0]), xytext=(10, 10), textcoords="offset points",
+                    fontsize=9, color=INK2)
+    ax.set_xlabel("Trial"); ax.set_ylabel("Mean CV Top-1 accuracy")
+    ax.legend(fontsize=9, loc="lower right")
+    ax.set_title("Bayesian optimisation of HistGradientBoosting (Optuna TPE)")
+    _save(fig, "tuning_history.png")
+
+
+def tuning_params(trials):
+    done = trials[trials.state == "COMPLETE"]
+    params = [c for c in done.columns if c.startswith("params_") and c != "params_limit_depth"]
+    logs = {"params_learning_rate", "params_max_leaf_nodes", "params_min_samples_leaf", "params_l2_regularization"}
+    cols = 3; rows = int(np.ceil(len(params) / cols))
+    fig, axes = plt.subplots(rows, cols, figsize=(10, 3 * rows), squeeze=False, sharey=True)
+    best = done.loc[done.value.idxmax()]
+    for ax, p in zip(axes.flat, params):
+        d = done.dropna(subset=[p])
+        ax.grid(axis="y"); ax.grid(axis="x", visible=False)
+        ax.scatter(d[p], d.value, s=16, color=BLUE, alpha=0.8)
+        if pd.notna(best[p]):
+            ax.scatter([best[p]], [best.value], s=60, facecolors="none", edgecolors=ORANGE, linewidths=2)
+        if p in logs:
+            ax.set_xscale("log")
+            ax.xaxis.set_minor_formatter(matplotlib.ticker.NullFormatter())
+        ax.set_xlabel(p.replace("params_", ""))
+    for ax in axes[:, 0]:
+        ax.set_ylabel("CV Top-1")
+    for ax in list(axes.flat)[len(params):]:
+        ax.axis("off")
+    fig.suptitle("Trial score by hyperparameter value (orange ring = best trial)", x=0.01, ha="left",
+                 fontsize=11, fontweight="bold", color=INK)
+    fig.tight_layout()
+    _save(fig, "tuning_params.png")
+
+
+def tuned_vs_untuned(cmp):
+    c = cmp.set_index("model").loc[["hist_gb", "hist_gb_tuned"]]
+    fig, (a1, a2) = plt.subplots(1, 2, figsize=(10, 3.4), gridspec_kw={"width_ratios": [3, 1.3]})
+    metrics = [("cv_macro_f1_mean", "CV macro F1"), ("cv_top1_mean", "CV Top-1"),
+               ("st_top1_acc", "Student-test Top-1"), ("st_macro_f1", "Student-test macro F1")]
+    y = np.arange(len(metrics)); h = 0.36
+    for off, (m, color, lab) in zip((-h / 2 - 0.01, h / 2 + 0.01), (("hist_gb", INK2, "Untuned"), ("hist_gb_tuned", BLUE, "Tuned"))):
+        vals = [c.loc[m, k] for k, _ in metrics]
+        a1.barh(y + off, vals, height=h, color=color, label=lab)
+        for yi, v in zip(y, vals):
+            a1.text(v + 0.002, yi + off, f"{v:.4f}", va="center", fontsize=8, color=INK2)
+    a1.set_yticks(y, [n for _, n in metrics]); a1.invert_yaxis()
+    lo = min(c[[k for k, _ in metrics]].min()) - 0.03
+    a1.set_xlim(lo, 1.0); a1.legend(fontsize=9, loc="lower right")
+    a1.set_title("Untuned vs tuned HistGradientBoosting")
+    ll = [c.loc["hist_gb", "st_log_loss"], c.loc["hist_gb_tuned", "st_log_loss"]]
+    a2.barh([0, 1], ll, height=0.6, color=[INK2, BLUE])
+    for yi, v in enumerate(ll):
+        a2.text(v * 1.01, yi, f"{v:.4f}", va="center", fontsize=8, color=INK2)
+    a2.set_yticks([0, 1], ["Untuned", "Tuned"]); a2.invert_yaxis()
+    a2.set_xlim(0, max(ll) * 1.3); a2.set_title("Student-test log loss", fontsize=10)
+    fig.tight_layout()
+    _save(fig, "tuned_vs_untuned.png")
+
+
 def main():
     cmp = pd.read_csv(RES / "model_comparison.csv")
     folds = pd.read_csv(RES / "cv_fold_scores.csv")
     cv_f1(cmp, folds); student_test(cmp); logloss(cmp); overfit(cmp); timing(cmp); confusions(cmp); histories()
+    if (RES / "optuna_trials.csv").exists():
+        trials = pd.read_csv(RES / "optuna_trials.csv")
+        tuning_history(trials); tuning_params(trials)
+    if "hist_gb_tuned" in set(cmp.model):
+        tuned_vs_untuned(cmp)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,13 @@
+{
+  "model": "hist_gb_tuned",
+  "params": {
+    "learning_rate": 0.01225746724529465,
+    "max_leaf_nodes": 95,
+    "min_samples_leaf": 28,
+    "l2_regularization": 7.93142294100041e-06,
+    "limit_depth": false,
+    "max_features": 0.6280791830432442
+  },
+  "cv_top1": 0.8946463424393286,
+  "source": "src/models/tune_hgb.py, results/optuna_trials.csv"
+}
