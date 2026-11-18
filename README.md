@@ -47,7 +47,7 @@ python -m src.models.train_models                # all models; or --models lr,rf
 python -m src.eval.plots                         # figures -> results/figures/
 ```
 
-`notebooks/02_model_comparison.ipynb` walks through the same steps for a demo: data, folds,
+`notebooks/model_comparison.ipynb` walks through the same steps for a demo: data, folds,
 optional live re-training of the fast models, the comparison table, every figure, and a Folium
 map of one student-test trip (GPS, reference route, HistGB and baseline predictions).
 
@@ -96,5 +96,4 @@ Allow inbound TCP port 8000 through the firewall on Laptop 1.
 | `src/pipeline.py` | One-trip inference: raw files to predicted route; server-side scoring |
 | `api` | FastAPI backend |
 | `ui` | Streamlit evaluator interface |
-| `notebooks` | Demo notebooks (`02_model_comparison.ipynb`) |
-| `tests` | Synthetic-data generator for smoke-testing the pipeline |
+| `notebooks` | Demo notebooks (`model_comparison.ipynb`) |

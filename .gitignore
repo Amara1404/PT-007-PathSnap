@@ -1,5 +1,7 @@
 # Raw hackathon data and course handouts: not redistributed in this public repo
 Student folder/
+docs/
+
 *.pdf
 
 # Regenerable with: python -m src.data.build_datasets --raw "Student folder" --out data/processed
@@ -17,3 +19,10 @@ __pycache__/
 # Large or data-containing model files: regenerable with python -m src.models.train_models --models rf,knn
 artifacts/models/random_forest.joblib
 artifacts/models/knn.joblib
+
+# Out-of-fold probabilities: regenerable with python -m src.models.oof --model <name>
+results/oof/
+
+src/hmm/data.py
+src/hmm/evaluate.py
+src/models/oof.py
