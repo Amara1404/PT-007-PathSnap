@@ -15,7 +15,9 @@ import folium
 COLORS = {"gps": "#2563eb", "predicted": "#dc2626", "reference": "#16a34a", "network": "#9ca3af"}
 
 
-def trip_map(gps=None, predicted=None, reference=None, network=None, zoom_start: int = 15) -> folium.Map:
+def trip_map(gps=None, predicted=None, reference=None, network=None, extra=None, zoom_start: int = 15) -> folium.Map:
+    """extra: optional list of (layer name, segments, colour) for more route layers,
+    e.g. a second model's prediction, drawn under the main predicted route."""
     pts = list(gps or [])
     seg_pts = [p for s in (predicted or []) + (reference or []) for p in s]
     allp = pts + seg_pts
@@ -32,6 +34,11 @@ def trip_map(gps=None, predicted=None, reference=None, network=None, zoom_start:
         for s in reference:
             folium.PolyLine(s, color=COLORS["reference"], weight=6, opacity=0.6).add_to(g)
         g.add_to(m)
+    for name, segs, color in (extra or []):
+        g = folium.FeatureGroup(name)
+        for s in segs:
+            folium.PolyLine(s, color=color, weight=4, opacity=0.8).add_to(g)
+        g.add_to(m)
     if predicted:
         g = folium.FeatureGroup("Predicted route")
         for s in predicted:
@@ -47,10 +54,12 @@ def trip_map(gps=None, predicted=None, reference=None, network=None, zoom_start:
         m.fit_bounds([[min(p[0] for p in allp), min(p[1] for p in allp)],
                       [max(p[0] for p in allp), max(p[1] for p in allp)]])
     folium.LayerControl(collapsed=False).add_to(m)
+    items = [("GPS observations", COLORS["gps"], pts), ("Predicted route", COLORS["predicted"], predicted)]
+    items += [(n, c, s) for n, s, c in (extra or [])]
+    items += [("Reference route", COLORS["reference"], reference), ("Road network", COLORS["network"], network)]
     rows = "".join(f"<div><span style='display:inline-block;width:14px;height:4px;background:{c};"
                    f"margin-right:6px;vertical-align:middle'></span>{n}</div>"
-                   for n, c, on in (("GPS observations", COLORS["gps"], pts), ("Predicted route", COLORS["predicted"], predicted),
-                                    ("Reference route", COLORS["reference"], reference), ("Road network", COLORS["network"], network)) if on)
+                   for n, c, on in items if on)
     m.get_root().html.add_child(folium.Element(
         f"<div style='position:fixed;bottom:24px;left:24px;z-index:9999;background:white;padding:8px 12px;"
         f"border:1px solid #ccc;border-radius:6px;font:13px sans-serif'>{rows}</div>"))
